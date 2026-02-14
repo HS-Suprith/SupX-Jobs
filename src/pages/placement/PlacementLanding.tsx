@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Code2, Video, BarChart3 } from "lucide-react";
+import { Code2, Video, BarChart3, ArrowLeft } from "lucide-react";
 
 const features = [
   {
@@ -26,6 +26,11 @@ const PlacementLanding = () => {
 
   return (
     <div className="placement-theme min-h-screen flex flex-col bg-background text-foreground">
+      <div className="px-6 pt-5">
+        <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")} className="gap-1.5 text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="h-3.5 w-3.5" /> Back
+        </Button>
+      </div>
       {/* Hero */}
       <header className="flex-1 flex items-center justify-center px-6 py-16 md:py-24">
         <div className="max-w-2xl text-center">
