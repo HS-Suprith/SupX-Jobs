@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 import PlacementLayout from "./layouts/PlacementLayout";
+import RbLayout from "./layouts/RbLayout";
 import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import Saved from "./pages/Saved";
@@ -19,6 +20,8 @@ import Practice from "./pages/placement/Practice";
 import Assessments from "./pages/placement/Assessments";
 import Resources from "./pages/placement/Resources";
 import PlacementProfile from "./pages/placement/PlacementProfile";
+import RbStepPage from "./pages/rb/RbStepPage";
+import RbProof from "./pages/rb/RbProof";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +52,19 @@ const App = () => (
             <Route path="/placement/assessments" element={<Assessments />} />
             <Route path="/placement/resources" element={<Resources />} />
             <Route path="/placement/profile" element={<PlacementProfile />} />
+          </Route>
+
+          {/* AI Resume Builder — Project 3 */}
+          <Route element={<RbLayout />}>
+            <Route path="/rb/01-problem" element={<RbStepPage />} />
+            <Route path="/rb/02-market" element={<RbStepPage />} />
+            <Route path="/rb/03-architecture" element={<RbStepPage />} />
+            <Route path="/rb/04-hld" element={<RbStepPage />} />
+            <Route path="/rb/05-lld" element={<RbStepPage />} />
+            <Route path="/rb/06-build" element={<RbStepPage />} />
+            <Route path="/rb/07-test" element={<RbStepPage />} />
+            <Route path="/rb/08-ship" element={<RbStepPage />} />
+            <Route path="/rb/proof" element={<RbProof />} />
           </Route>
 
           {/* Design system reference */}
