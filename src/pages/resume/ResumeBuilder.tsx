@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ResumePreviewPanel from "@/components/resume/ResumePreviewPanel";
+import AtsScorePanel from "@/components/resume/AtsScorePanel";
 import {
   Plus,
   Trash2,
@@ -244,9 +245,12 @@ const ResumeBuilder = () => {
       </div>
 
       {/* Right — Live Preview */}
-      <div className="w-full lg:w-[420px] xl:w-[480px] shrink-0 overflow-y-auto p-6 md:p-8 bg-muted/30">
-        <p className="text-caption font-medium text-muted-foreground uppercase tracking-wider mb-4">Live Preview</p>
-        <ResumePreviewPanel resume={resume} />
+      <div className="w-full lg:w-[420px] xl:w-[480px] shrink-0 overflow-y-auto p-6 md:p-8 bg-muted/30 space-y-8">
+        <div>
+          <p className="text-caption font-medium text-muted-foreground uppercase tracking-wider mb-4">Live Preview</p>
+          <ResumePreviewPanel resume={resume} />
+        </div>
+        <AtsScorePanel resume={resume} />
       </div>
     </main>
   );
