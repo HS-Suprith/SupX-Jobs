@@ -16,7 +16,6 @@ const sidebarItems = [
   { label: "Practice", to: "/placement/practice", icon: Code2 },
   { label: "Assessments", to: "/placement/assessments", icon: ClipboardCheck },
   { label: "Resources", to: "/placement/resources", icon: BookOpen },
-  { label: "Profile", to: "/placement/profile", icon: User },
 ];
 
 const PlacementLayout = () => {
