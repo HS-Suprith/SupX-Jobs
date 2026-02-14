@@ -1,8 +1,17 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sun, Moon } from "lucide-react";
 
 const Landing = () => {
+  const [dark, setDark] = useState(() =>
+    document.documentElement.classList.contains("dark")
+  );
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark);
+  }, [dark]);
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       {/* Nav */}
@@ -11,9 +20,20 @@ const Landing = () => {
           <span className="font-heading text-body font-medium text-foreground">
             SupX Jobs
           </span>
-          <Link to="/dashboard">
-            <Button variant="outline" size="sm">Sign In</Button>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setDark((d) => !d)}
+              aria-label="Toggle theme"
+              className="h-9 w-9"
+            >
+              {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+            <Link to="/dashboard">
+              <Button variant="outline" size="sm">Sign In</Button>
+            </Link>
+          </div>
         </div>
       </nav>
 
