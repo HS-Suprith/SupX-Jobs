@@ -4,14 +4,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bookmark, BookmarkCheck, ExternalLink, Eye } from "lucide-react";
 import { ScoreTier, getScoreTier } from "@/lib/match-score";
+import { JobStatus } from "@/hooks/use-job-status";
 import React from "react";
 
 interface JobCardProps {
   job: Job;
   isSaved: boolean;
   matchScore?: number | null;
+  status: JobStatus;
   onToggleSave: (id: string) => void;
   onView: (job: Job) => void;
+  onStatusChange: (jobId: string, status: JobStatus, title: string, company: string) => void;
 }
 
 const sourceVariant: Record<string, "default" | "secondary" | "outline"> = {
@@ -27,13 +30,30 @@ const tierStyles: Record<ScoreTier, string> = {
   minimal: "bg-muted text-muted-foreground",
 };
 
+const statusStyles: Record<JobStatus, string> = {
+  "Not Applied": "bg-muted text-muted-foreground",
+  "Applied": "bg-blue-100 text-blue-800",
+  "Rejected": "bg-destructive/10 text-destructive",
+  "Selected": "bg-success/15 text-success",
+};
+
+const allStatuses: JobStatus[] = ["Not Applied", "Applied", "Rejected", "Selected"];
+
 function formatPostedAgo(days: number): string {
   if (days === 0) return "Today";
   if (days === 1) return "1 day ago";
   return `${days} days ago`;
 }
 
-const JobCard = React.memo(({ job, isSaved, matchScore, onToggleSave, onView }: JobCardProps) => {
+const JobCard = React.memo(({
+  job,
+  isSaved,
+  matchScore,
+  status,
+  onToggleSave,
+  onView,
+  onStatusChange,
+}: JobCardProps) => {
   return (
     <Card className="transition-shadow duration-normal hover:shadow-md">
       <CardContent className="p-6">
@@ -49,7 +69,9 @@ const JobCard = React.memo(({ job, isSaved, matchScore, onToggleSave, onView }: 
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {matchScore != null && (
-              <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${tierStyles[getScoreTier(matchScore)]}`}>
+              <span
+                className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${tierStyles[getScoreTier(matchScore)]}`}
+              >
                 {matchScore}%
               </span>
             )}
@@ -61,8 +83,12 @@ const JobCard = React.memo(({ job, isSaved, matchScore, onToggleSave, onView }: 
 
         {/* Meta row */}
         <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-caption text-muted-foreground">
-          <span>{job.location} · {job.mode}</span>
-          <span>{job.experience === "Fresher" ? "Fresher" : `${job.experience} yrs`}</span>
+          <span>
+            {job.location} · {job.mode}
+          </span>
+          <span>
+            {job.experience === "Fresher" ? "Fresher" : `${job.experience} yrs`}
+          </span>
           <span>{job.salaryRange}</span>
         </div>
 
@@ -70,6 +96,24 @@ const JobCard = React.memo(({ job, isSaved, matchScore, onToggleSave, onView }: 
         <p className="mt-3 text-caption text-muted-foreground">
           {formatPostedAgo(job.postedDaysAgo)}
         </p>
+
+        {/* Status buttons */}
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {allStatuses.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => onStatusChange(job.id, s, job.title, job.company)}
+              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors duration-normal ${
+                status === s
+                  ? statusStyles[s]
+                  : "bg-transparent text-muted-foreground hover:bg-secondary"
+              }`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
 
         {/* Actions */}
         <div className="mt-4 flex items-center gap-2">

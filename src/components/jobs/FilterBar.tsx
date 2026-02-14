@@ -15,6 +15,7 @@ export interface Filters {
   experience: string;
   source: string;
   sort: string;
+  status: string;
 }
 
 interface FilterBarProps {
@@ -27,6 +28,7 @@ const modes = ["All", "Remote", "Hybrid", "Onsite"];
 const experiences = ["All", "Fresher", "0-1", "1-3", "3-5"];
 const sources = ["All", "LinkedIn", "Naukri", "Indeed"];
 const sorts = ["Latest", "Oldest", "Match Score", "Salary"];
+const statuses = ["All", "Not Applied", "Applied", "Rejected", "Selected"];
 
 const FilterBar = ({ filters, onChange }: FilterBarProps) => {
   const update = (key: keyof Filters, value: string) =>
@@ -83,6 +85,17 @@ const FilterBar = ({ filters, onChange }: FilterBarProps) => {
         </SelectTrigger>
         <SelectContent>
           {sources.map((s) => (
+            <SelectItem key={s} value={s}>{s}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Select value={filters.status} onValueChange={(v) => update("status", v)}>
+        <SelectTrigger className="w-full md:w-[140px]">
+          <SelectValue placeholder="Status" />
+        </SelectTrigger>
+        <SelectContent>
+          {statuses.map((s) => (
             <SelectItem key={s} value={s}>{s}</SelectItem>
           ))}
         </SelectContent>

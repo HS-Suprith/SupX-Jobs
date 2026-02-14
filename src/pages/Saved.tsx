@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { jobs, Job } from "@/data/jobs";
 import { useSavedJobs } from "@/hooks/use-saved-jobs";
+import { useJobStatus } from "@/hooks/use-job-status";
 import JobCard from "@/components/jobs/JobCard";
 import JobDetailModal from "@/components/jobs/JobDetailModal";
 import { Bookmark } from "lucide-react";
 
 const Saved = () => {
   const { savedIds, isSaved, toggleSave } = useSavedJobs();
+  const { getStatus, setStatus } = useJobStatus();
   const [viewJob, setViewJob] = useState<Job | null>(null);
 
   const savedJobs = jobs.filter((j) => savedIds.includes(j.id));
@@ -41,8 +43,10 @@ const Saved = () => {
               key={job.id}
               job={job}
               isSaved={isSaved(job.id)}
+              status={getStatus(job.id)}
               onToggleSave={toggleSave}
               onView={setViewJob}
+              onStatusChange={(id, s, t, c) => setStatus(id, s, t, c)}
             />
           ))}
         </div>
