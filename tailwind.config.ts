@@ -2,7 +2,12 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -12,7 +17,38 @@ export default {
         "2xl": "1400px",
       },
     },
+    spacing: {
+      "0": "0px",
+      "1": "4px",
+      "2": "8px",
+      "3": "12px",
+      "4": "16px",
+      "5": "20px",
+      "6": "24px",
+      "8": "32px",
+      "10": "40px",
+      "12": "48px",
+      "16": "64px",
+      "20": "80px",
+      "24": "96px",
+      "px": "1px",
+      "0.5": "2px",
+      "1.5": "6px",
+    },
     extend: {
+      fontFamily: {
+        heading: ["DM Serif Display", "Georgia", "serif"],
+        body: ["DM Sans", "system-ui", "-apple-system", "sans-serif"],
+      },
+      fontSize: {
+        "display": ["3rem", { lineHeight: "1.15", letterSpacing: "-0.02em" }],
+        "headline": ["2.25rem", { lineHeight: "1.2", letterSpacing: "-0.01em" }],
+        "title": ["1.5rem", { lineHeight: "1.3" }],
+        "body-lg": ["1.125rem", { lineHeight: "1.7" }],
+        "body": ["1rem", { lineHeight: "1.7" }],
+        "caption": ["0.875rem", { lineHeight: "1.5" }],
+        "overline": ["0.75rem", { lineHeight: "1.4", letterSpacing: "0.08em" }],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -47,6 +83,14 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -63,22 +107,18 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      transitionDuration: {
+        fast: "150ms",
+        normal: "200ms",
+      },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {
