@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import ResumePreviewPanel from "@/components/resume/ResumePreviewPanel";
 import AtsScorePanel from "@/components/resume/AtsScorePanel";
-import TemplateTabs from "@/components/resume/TemplateTabs";
+import TemplatePicker from "@/components/resume/TemplatePicker";
 import BulletGuidance from "@/components/resume/BulletGuidance";
 import TagInput from "@/components/resume/TagInput";
 import {
@@ -38,7 +38,7 @@ const SUGGESTED_SKILLS = {
 
 const ResumeBuilder = () => {
   const { resume, updateField, loadData } = useResumeData();
-  const { template, setTemplate } = useResumeTemplate();
+  const { template, setTemplate, accentColor, setAccentColor } = useResumeTemplate();
   const [suggestingSkills, setSuggestingSkills] = useState(false);
   const [openProjects, setOpenProjects] = useState<Record<string, boolean>>({});
 
@@ -429,12 +429,15 @@ const ResumeBuilder = () => {
 
       {/* Right — Live Preview + ATS */}
       <div className="w-full lg:w-[420px] xl:w-[480px] shrink-0 overflow-y-auto p-6 md:p-8 bg-muted/30 space-y-8">
+        <TemplatePicker
+          activeTemplate={template}
+          onTemplateChange={setTemplate}
+          activeColor={accentColor}
+          onColorChange={setAccentColor}
+        />
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-caption font-medium text-muted-foreground uppercase tracking-wider">Live Preview</p>
-            <TemplateTabs active={template} onChange={setTemplate} />
-          </div>
-          <ResumePreviewPanel resume={resume} template={template} />
+          <p className="text-caption font-medium text-muted-foreground uppercase tracking-wider mb-4">Live Preview</p>
+          <ResumePreviewPanel resume={resume} template={template} accentColor={accentColor} />
         </div>
         <AtsScorePanel resume={resume} />
       </div>
