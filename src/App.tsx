@@ -21,7 +21,7 @@ import Practice from "./pages/placement/Practice";
 import Assessments from "./pages/placement/Assessments";
 import Resources from "./pages/placement/Resources";
 import PlacementProfile from "./pages/placement/PlacementProfile";
-import RbStepPage from "./pages/rb/RbStepPage";
+
 import RbProof from "./pages/rb/RbProof";
 import ResumeHome from "./pages/resume/ResumeHome";
 import ResumeBuilder from "./pages/resume/ResumeBuilder";
@@ -59,16 +59,8 @@ const App = () => (
             <Route path="/placement/proof" element={<PlacementProfile />} />
           </Route>
 
-          {/* AI Resume Builder — Build Track (Project 3) */}
+          {/* AI Resume Builder — Proof (Project 3) */}
           <Route element={<RbLayout />}>
-            <Route path="/rb/01-problem" element={<RbStepPage />} />
-            <Route path="/rb/02-market" element={<RbStepPage />} />
-            <Route path="/rb/03-architecture" element={<RbStepPage />} />
-            <Route path="/rb/04-hld" element={<RbStepPage />} />
-            <Route path="/rb/05-lld" element={<RbStepPage />} />
-            <Route path="/rb/06-build" element={<RbStepPage />} />
-            <Route path="/rb/07-test" element={<RbStepPage />} />
-            <Route path="/rb/08-ship" element={<RbStepPage />} />
             <Route path="/resume/proof" element={<RbProof />} />
           </Route>
 
