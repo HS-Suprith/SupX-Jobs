@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import type { ResumeData } from "@/data/resume-types";
 import { emptyResume } from "@/data/resume-types";
 
-const STORAGE_KEY = "rb_resume_data";
+const STORAGE_KEY = "resumeBuilderData";
 
 export function useResumeData() {
   const [resume, setResume] = useState<ResumeData>(() => {
