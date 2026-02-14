@@ -42,7 +42,7 @@ const FilterBar = ({ filters, onChange }: FilterBarProps) => {
           placeholder="Search title or company…"
           value={filters.keyword}
           onChange={(e) => update("keyword", e.target.value)}
-          className="pl-9"
+          className="pl-10"
         />
       </div>
 
