@@ -84,6 +84,61 @@
   }
 }
 
+/* ── Print styles for resume export ── */
+@media print {
+  /* Hide everything except the resume */
+  body * {
+    visibility: hidden;
+  }
+
+  #resume-print-area,
+  #resume-print-area * {
+    visibility: visible;
+  }
+
+  #resume-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    min-height: auto !important;
+    background: white !important;
+    color: hsl(0, 0%, 7%) !important;
+    padding: 40px 48px !important;
+    margin: 0 !important;
+  }
+
+  /* Clean margins */
+  @page {
+    margin: 0.5in;
+    size: A4;
+  }
+
+  /* Prevent section splits */
+  #resume-print-area section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  #resume-print-area section > div {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Remove any colored accents in print */
+  #resume-print-area * {
+    color: hsl(0, 0%, 7%) !important;
+    border-color: hsl(0, 0%, 80%) !important;
+  }
+
+  #resume-print-area h2 {
+    color: hsl(0, 0%, 7%) !important;
+  }
+}
+
 /* Placement Platform purple theme */
 .placement-theme {
   --background: 240 20% 97%;
