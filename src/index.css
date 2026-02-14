@@ -220,13 +220,13 @@
   --input: 40 10% 86%;
   --ring: 0 100% 27%;
 
-  --sidebar-background: 0 15% 12%;
-  --sidebar-foreground: 40 20% 92%;
-  --sidebar-primary: 0 85% 50%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 0 10% 18%;
-  --sidebar-accent-foreground: 40 20% 92%;
-  --sidebar-border: 0 10% 20%;
+  --sidebar-background: 40 20% 96%;
+  --sidebar-foreground: 0 0% 7%;
+  --sidebar-primary: 0 100% 27%;
+  --sidebar-primary-foreground: 40 20% 96%;
+  --sidebar-accent: 40 12% 90%;
+  --sidebar-accent-foreground: 0 0% 7%;
+  --sidebar-border: 40 10% 86%;
   --sidebar-ring: 0 100% 27%;
 }
 
