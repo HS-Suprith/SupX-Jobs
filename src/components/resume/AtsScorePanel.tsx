@@ -1,10 +1,45 @@
 import { useMemo } from "react";
 import type { ResumeData } from "@/data/resume-types";
 import { computeAtsScore } from "@/lib/ats-score";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, TrendingUp } from "lucide-react";
+
+function wordCount(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function hasNumericIndicator(text: string): boolean {
+  return /\d+%|\d+x|\d+k|\d+\+|\d+/.test(text);
+}
+
+function computeImprovements(resume: ResumeData): string[] {
+  const improvements: string[] = [];
+
+  if (resume.projects.length < 2)
+    improvements.push("Add more projects to showcase your work.");
+
+  const allBullets = [
+    ...resume.experience.map((e) => e.description),
+    ...resume.projects.map((p) => p.description),
+  ];
+  if (!allBullets.some(hasNumericIndicator))
+    improvements.push("Add measurable impact (numbers, %, etc.) to your bullets.");
+
+  if (wordCount(resume.summary) < 40)
+    improvements.push("Expand your summary to at least 40 words.");
+
+  const skillList = resume.skills.split(",").map((s) => s.trim()).filter(Boolean);
+  if (skillList.length < 8)
+    improvements.push("Add more skills — target at least 8.");
+
+  if (resume.experience.length === 0)
+    improvements.push("Add at least one internship or project work experience.");
+
+  return improvements.slice(0, 3);
+}
 
 const AtsScorePanel = ({ resume }: { resume: ResumeData }) => {
   const { score, suggestions } = useMemo(() => computeAtsScore(resume), [resume]);
+  const improvements = useMemo(() => computeImprovements(resume), [resume]);
 
   const size = 120;
   const stroke = 8;
@@ -20,7 +55,7 @@ const AtsScorePanel = ({ resume }: { resume: ResumeData }) => {
         : "hsl(var(--destructive))";
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Score ring */}
       <div className="flex flex-col items-center">
         <p className="text-caption font-medium text-muted-foreground uppercase tracking-wider mb-4">
@@ -67,6 +102,23 @@ const AtsScorePanel = ({ resume }: { resume: ResumeData }) => {
               <li key={i} className="flex items-start gap-2 text-caption text-muted-foreground">
                 <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0 text-warning" />
                 <span>{s}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Top 3 Improvements */}
+      {improvements.length > 0 && (
+        <div className="space-y-2 border-t pt-5">
+          <p className="text-caption font-medium text-muted-foreground uppercase tracking-wider">
+            Top 3 Improvements
+          </p>
+          <ul className="space-y-2">
+            {improvements.map((imp, i) => (
+              <li key={i} className="flex items-start gap-2 text-caption text-muted-foreground">
+                <TrendingUp className="h-3.5 w-3.5 mt-0.5 shrink-0 text-primary" />
+                <span>{imp}</span>
               </li>
             ))}
           </ul>

@@ -1,4 +1,5 @@
 import { useResumeData } from "@/hooks/use-resume-data";
+import { useResumeTemplate } from "@/hooks/use-resume-template";
 import { sampleResume } from "@/data/resume-types";
 import type { ResumeEducation, ResumeExperience, ResumeProject } from "@/data/resume-types";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ResumePreviewPanel from "@/components/resume/ResumePreviewPanel";
 import AtsScorePanel from "@/components/resume/AtsScorePanel";
+import TemplateTabs from "@/components/resume/TemplateTabs";
+import BulletGuidance from "@/components/resume/BulletGuidance";
 import {
   Plus,
   Trash2,
@@ -23,6 +26,7 @@ import { toast } from "sonner";
 
 const ResumeBuilder = () => {
   const { resume, updateField, loadData } = useResumeData();
+  const { template, setTemplate } = useResumeTemplate();
 
   const handleLoadSample = () => {
     loadData(sampleResume);
@@ -174,7 +178,10 @@ const ResumeBuilder = () => {
                     </Button>
                   </div>
                 </div>
-                <Textarea placeholder="Description" rows={2} value={exp.description} onChange={(e) => updateExperience(exp.id, "description", e.target.value)} className="resize-y" />
+                <div>
+                  <Textarea placeholder="Description" rows={2} value={exp.description} onChange={(e) => updateExperience(exp.id, "description", e.target.value)} className="resize-y" />
+                  <BulletGuidance text={exp.description} />
+                </div>
               </div>
             ))}
           </CardContent>
@@ -205,7 +212,10 @@ const ResumeBuilder = () => {
                     </Button>
                   </div>
                 </div>
-                <Textarea placeholder="Description" rows={2} value={proj.description} onChange={(e) => updateProject(proj.id, "description", e.target.value)} className="resize-y" />
+                <div>
+                  <Textarea placeholder="Description" rows={2} value={proj.description} onChange={(e) => updateProject(proj.id, "description", e.target.value)} className="resize-y" />
+                  <BulletGuidance text={proj.description} />
+                </div>
               </div>
             ))}
           </CardContent>
@@ -244,11 +254,14 @@ const ResumeBuilder = () => {
         </Card>
       </div>
 
-      {/* Right — Live Preview */}
+      {/* Right — Live Preview + ATS */}
       <div className="w-full lg:w-[420px] xl:w-[480px] shrink-0 overflow-y-auto p-6 md:p-8 bg-muted/30 space-y-8">
         <div>
-          <p className="text-caption font-medium text-muted-foreground uppercase tracking-wider mb-4">Live Preview</p>
-          <ResumePreviewPanel resume={resume} />
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-caption font-medium text-muted-foreground uppercase tracking-wider">Live Preview</p>
+            <TemplateTabs active={template} onChange={setTemplate} />
+          </div>
+          <ResumePreviewPanel resume={resume} template={template} />
         </div>
         <AtsScorePanel resume={resume} />
       </div>
