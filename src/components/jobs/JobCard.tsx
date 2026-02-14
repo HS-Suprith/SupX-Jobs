@@ -19,8 +19,8 @@ interface JobCardProps {
 
 const sourceVariant: Record<string, "default" | "secondary" | "outline"> = {
   LinkedIn: "default",
-  Naukri: "secondary",
-  Indeed: "outline",
+  Naukri: "default",
+  Indeed: "default",
 };
 
 const tierStyles: Record<ScoreTier, string> = {
