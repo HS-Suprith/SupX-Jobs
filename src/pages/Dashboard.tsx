@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { jobs, Job } from "@/data/jobs";
 import { useSavedJobs } from "@/hooks/use-saved-jobs";
+import { useJobStatus } from "@/hooks/use-job-status";
 import { loadPreferences } from "@/lib/preferences";
 import { computeMatchScore } from "@/lib/match-score";
 import FilterBar, { Filters } from "@/components/jobs/FilterBar";
@@ -19,6 +20,7 @@ const defaultFilters: Filters = {
   experience: "All",
   source: "All",
   sort: "Latest",
+  status: "All",
 };
 
 function extractSalaryNum(s: string): number {
@@ -31,11 +33,11 @@ const Dashboard = () => {
   const [viewJob, setViewJob] = useState<Job | null>(null);
   const [showOnlyMatches, setShowOnlyMatches] = useState(false);
   const { isSaved, toggleSave } = useSavedJobs();
+  const { getStatus, setStatus } = useJobStatus();
 
   const prefs = useMemo(() => loadPreferences(), []);
   const hasPrefs = prefs !== null;
 
-  // Compute scores once
   const scoredJobs = useMemo(() => {
     return jobs.map((job) => ({
       job,
@@ -46,14 +48,12 @@ const Dashboard = () => {
   const filtered = useMemo(() => {
     let result = [...scoredJobs];
 
-    // Threshold filter
     if (showOnlyMatches && prefs) {
       result = result.filter(
         (item) => item.matchScore !== null && item.matchScore >= prefs.minMatchScore
       );
     }
 
-    // keyword
     if (filters.keyword) {
       const kw = filters.keyword.toLowerCase();
       result = result.filter(
@@ -71,8 +71,9 @@ const Dashboard = () => {
       result = result.filter((item) => item.job.experience === filters.experience);
     if (filters.source !== "All")
       result = result.filter((item) => item.job.source === filters.source);
+    if (filters.status !== "All")
+      result = result.filter((item) => getStatus(item.job.id) === filters.status);
 
-    // sort
     switch (filters.sort) {
       case "Latest":
         result.sort((a, b) => a.job.postedDaysAgo - b.job.postedDaysAgo);
@@ -91,9 +92,15 @@ const Dashboard = () => {
     }
 
     return result;
-  }, [filters, scoredJobs, showOnlyMatches, prefs]);
+  }, [filters, scoredJobs, showOnlyMatches, prefs, getStatus]);
 
   const handleView = useCallback((job: Job) => setViewJob(job), []);
+  const handleStatusChange = useCallback(
+    (jobId: string, status: any, title: string, company: string) => {
+      setStatus(jobId, status, title, company);
+    },
+    [setStatus]
+  );
 
   return (
     <main className="flex-1 px-6 md:px-10 py-8 md:py-10">
@@ -103,7 +110,6 @@ const Dashboard = () => {
           {filtered.length} job{filtered.length !== 1 ? "s" : ""} found
         </p>
 
-        {/* Preferences banner */}
         {!hasPrefs && (
           <div className="mt-4 flex items-center gap-3 rounded-md border border-warning/40 bg-warning/5 px-4 py-3">
             <AlertCircle className="h-4 w-4 text-warning shrink-0" />
@@ -123,7 +129,6 @@ const Dashboard = () => {
           <FilterBar filters={filters} onChange={setFilters} />
         </div>
 
-        {/* Match toggle */}
         {hasPrefs && (
           <div className="mt-4 flex items-center gap-3">
             <Switch
@@ -144,8 +149,10 @@ const Dashboard = () => {
               job={job}
               isSaved={isSaved(job.id)}
               matchScore={matchScore}
+              status={getStatus(job.id)}
               onToggleSave={toggleSave}
               onView={handleView}
+              onStatusChange={handleStatusChange}
             />
           ))}
         </div>

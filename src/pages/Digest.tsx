@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import { loadPreferences } from "@/lib/preferences";
 import { loadDigest, generateDigest, digestToPlainText, DigestData } from "@/lib/digest";
 import { getScoreTier, ScoreTier } from "@/lib/match-score";
+import { getStatusLog, StatusChangeLog } from "@/hooks/use-job-status";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Mail,
   Copy,
@@ -14,6 +14,7 @@ import {
   Settings,
   AlertCircle,
   ExternalLink,
+  ClipboardList,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -22,6 +23,12 @@ const tierStyles: Record<ScoreTier, string> = {
   medium: "bg-warning text-warning-foreground",
   low: "bg-secondary text-secondary-foreground",
   minimal: "bg-muted text-muted-foreground",
+};
+
+const statusLogStyles: Record<string, string> = {
+  Applied: "bg-blue-100 text-blue-800",
+  Rejected: "bg-destructive/10 text-destructive",
+  Selected: "bg-success/15 text-success",
 };
 
 function formatDate(dateStr: string): string {
@@ -34,16 +41,27 @@ function formatDate(dateStr: string): string {
   });
 }
 
+function formatDateTime(iso: string): string {
+  return new Date(iso).toLocaleString("en-IN", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 const Digest = () => {
   const [digest, setDigest] = useState<DigestData | null>(null);
   const [hasPrefs, setHasPrefs] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [statusLog, setStatusLog] = useState<StatusChangeLog[]>([]);
 
   useEffect(() => {
     const prefs = loadPreferences();
     setHasPrefs(prefs !== null);
     const existing = loadDigest();
     if (existing) setDigest(existing);
+    setStatusLog(getStatusLog());
     setChecked(true);
   }, []);
 
@@ -72,7 +90,6 @@ const Digest = () => {
 
   if (!checked) return null;
 
-  // No preferences set
   if (!hasPrefs) {
     return (
       <main className="flex flex-1 flex-col items-center justify-center px-10 py-24">
@@ -97,7 +114,6 @@ const Digest = () => {
     );
   }
 
-  // No digest generated yet
   if (!digest) {
     return (
       <main className="flex flex-1 flex-col items-center justify-center px-10 py-24">
@@ -124,13 +140,11 @@ const Digest = () => {
     );
   }
 
-  // Digest exists — render email-style layout
   return (
     <main className="flex-1 px-6 md:px-10 py-8 md:py-16">
       <div className="max-w-2xl mx-auto">
-        {/* Digest Card — email newsletter style */}
+        {/* Digest Card */}
         <Card className="overflow-hidden">
-          {/* Email header */}
           <div className="bg-primary px-8 py-6">
             <h1 className="font-heading text-title text-primary-foreground">
               Top 10 Jobs For You
@@ -154,16 +168,10 @@ const Digest = () => {
             ) : (
               <ul className="divide-y">
                 {digest.entries.map((entry, i) => (
-                  <li
-                    key={entry.jobId}
-                    className="flex items-start gap-4 px-8 py-5"
-                  >
-                    {/* Rank */}
+                  <li key={entry.jobId} className="flex items-start gap-4 px-8 py-5">
                     <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-caption font-medium text-secondary-foreground">
                       {i + 1}
                     </span>
-
-                    {/* Details */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
@@ -189,14 +197,8 @@ const Digest = () => {
                         </span>
                       </div>
                     </div>
-
-                    {/* Apply */}
                     <Button variant="outline" size="sm" asChild className="shrink-0 mt-1">
-                      <a
-                        href={entry.applyUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
+                      <a href={entry.applyUrl} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="h-3.5 w-3.5 mr-1" />
                         Apply
                       </a>
@@ -206,7 +208,6 @@ const Digest = () => {
               </ul>
             )}
 
-            {/* Footer */}
             <div className="border-t px-8 py-5">
               <p className="text-caption text-muted-foreground text-center">
                 This digest was generated based on your preferences.
@@ -234,6 +235,46 @@ const Digest = () => {
         <p className="mt-4 text-caption text-muted-foreground italic text-center">
           Demo Mode: Daily 9AM trigger simulated manually.
         </p>
+
+        {/* Recent Status Updates */}
+        {statusLog.length > 0 && (
+          <Card className="mt-10">
+            <div className="px-8 py-5 border-b">
+              <div className="flex items-center gap-2">
+                <ClipboardList className="h-4 w-4 text-muted-foreground" />
+                <h2 className="font-heading text-body font-medium text-foreground">
+                  Recent Status Updates
+                </h2>
+              </div>
+            </div>
+            <CardContent className="p-0">
+              <ul className="divide-y">
+                {statusLog.slice(0, 10).map((log, i) => (
+                  <li key={`${log.jobId}-${i}`} className="flex items-center justify-between gap-4 px-8 py-4">
+                    <div className="min-w-0">
+                      <p className="text-caption font-medium text-foreground truncate">
+                        {log.jobTitle}
+                      </p>
+                      <p className="text-caption text-muted-foreground">
+                        {log.company}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span
+                        className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${statusLogStyles[log.status] ?? "bg-muted text-muted-foreground"}`}
+                      >
+                        {log.status}
+                      </span>
+                      <span className="text-caption text-muted-foreground">
+                        {formatDateTime(log.changedAt)}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </main>
   );
