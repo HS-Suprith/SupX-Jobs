@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useRbProgress } from "@/hooks/use-rb-progress";
 import { useRbArtifacts, isValidRbUrl } from "@/hooks/use-rb-artifacts";
+import { useRbTestChecklist, rbTestItems } from "@/hooks/use-rb-test-checklist";
 import { rbSteps } from "@/data/rb-steps";
 import ContextHeader from "@/components/layout/ContextHeader";
 import {
@@ -25,13 +27,21 @@ import { toast } from "sonner";
 const RbProof = () => {
   const { getStep, allCompleted, completedCount, totalSteps, resetAll } = useRbProgress();
   const { artifacts, update, allLinksValid, markShipped, unship } = useRbArtifacts();
+  const {
+    isChecked,
+    toggle,
+    reset: resetChecklist,
+    passedCount: checklistPassed,
+    total: checklistTotal,
+    allPassed: allChecklistPassed,
+  } = useRbTestChecklist();
 
-  const canShip = allCompleted && allLinksValid;
+  const canShip = allCompleted && allChecklistPassed && allLinksValid;
   const isShipped = artifacts.shipped;
 
   const projectStatus: "not-started" | "in-progress" | "shipped" = isShipped
     ? "shipped"
-    : completedCount > 0 || allLinksValid
+    : completedCount > 0 || allLinksValid || checklistPassed > 0
       ? "in-progress"
       : "not-started";
 
@@ -52,7 +62,7 @@ const RbProof = () => {
   };
 
   const handleCopySubmission = async () => {
-    const text = `Placement Readiness Platform — Final Submission
+    const text = `AI Resume Builder — Final Submission
 
 Lovable Project:
 ${artifacts.lovableLink.trim()}
@@ -64,11 +74,11 @@ Live Deployment:
 ${artifacts.deployedUrl.trim()}
 
 Core Capabilities:
-- AI-powered resume generation
-- Multiple professional templates
-- Real-time preview
-- PDF export
-- Form validation and persistence`;
+- Structured resume builder
+- Deterministic ATS scoring
+- Template switching
+- PDF export with clean formatting
+- Persistence + validation checklist`;
 
     await navigator.clipboard.writeText(text);
     toast.success("Submission copied to clipboard");
@@ -85,7 +95,7 @@ Core Capabilities:
     <>
       <ContextHeader
         headline="Proof of Work"
-        subtext="Verify all steps are complete, provide artifact links, and ship your project."
+        subtext="Verify all steps are complete, pass the test checklist, provide artifact links, and ship your project."
       />
       <main className="flex-1 p-10 max-w-3xl">
         {/* Status */}
@@ -109,7 +119,7 @@ Core Capabilities:
               <div className="flex items-center gap-3 mb-4">
                 <CheckCircle2 className="h-5 w-5 text-success shrink-0" />
                 <p className="text-body font-medium text-foreground">
-                  Project Shipped Successfully.
+                  Project 3 Shipped Successfully.
                 </p>
                 <Button
                   variant="ghost"
@@ -177,7 +187,43 @@ Core Capabilities:
           </CardContent>
         </Card>
 
-        {/* B) Artifact Inputs */}
+        {/* B) Test Checklist */}
+        <Card className="mt-6">
+          <div className="px-6 py-4 border-b flex items-center justify-between">
+            <h3 className="font-heading text-body font-medium text-foreground">
+              Test Checklist ({checklistPassed}/{checklistTotal})
+            </h3>
+            <Button variant="ghost" size="sm" onClick={resetChecklist} className="gap-1.5 text-muted-foreground">
+              <RotateCcw className="h-3.5 w-3.5" /> Reset
+            </Button>
+          </div>
+          <CardContent className="p-0">
+            <ul className="divide-y">
+              {rbTestItems.map((item) => (
+                <li key={item.id} className="flex items-start gap-3 px-6 py-3">
+                  <Checkbox
+                    checked={isChecked(item.id)}
+                    onCheckedChange={() => toggle(item.id)}
+                    className="mt-0.5"
+                  />
+                  <div className="flex-1">
+                    <span className="text-caption text-foreground">{item.label}</span>
+                    <p className="text-caption text-muted-foreground mt-0.5">{item.hint}</p>
+                  </div>
+                  <span
+                    className={`text-caption font-medium shrink-0 ${
+                      isChecked(item.id) ? "text-success" : "text-muted-foreground"
+                    }`}
+                  >
+                    {isChecked(item.id) ? "Passed" : "Pending"}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+
+        {/* C) Artifact Inputs */}
         <Card className="mt-6">
           <div className="px-6 py-4 border-b">
             <h3 className="font-heading text-body font-medium text-foreground">
@@ -247,7 +293,7 @@ Core Capabilities:
           </CardContent>
         </Card>
 
-        {/* C) Ship */}
+        {/* D) Ship */}
         <Card className="mt-6">
           <CardContent className="p-6 space-y-4">
             {!canShip && !isShipped && (
@@ -258,6 +304,9 @@ Core Capabilities:
                   <ul className="mt-1 space-y-0.5 text-muted-foreground">
                     {!allCompleted && (
                       <li>• Complete all {totalSteps} build steps</li>
+                    )}
+                    {!allChecklistPassed && (
+                      <li>• Pass all {checklistTotal} test checklist items ({checklistPassed}/{checklistTotal} done)</li>
                     )}
                     {!allLinksValid && (
                       <li>• Provide all 3 valid artifact links</li>
