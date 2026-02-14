@@ -3,10 +3,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bookmark, BookmarkCheck, ExternalLink, Eye } from "lucide-react";
+import { ScoreTier, getScoreTier } from "@/lib/match-score";
+import React from "react";
 
 interface JobCardProps {
   job: Job;
   isSaved: boolean;
+  matchScore?: number | null;
   onToggleSave: (id: string) => void;
   onView: (job: Job) => void;
 }
@@ -17,13 +20,20 @@ const sourceVariant: Record<string, "default" | "secondary" | "outline"> = {
   Indeed: "outline",
 };
 
+const tierStyles: Record<ScoreTier, string> = {
+  high: "bg-success text-success-foreground",
+  medium: "bg-warning text-warning-foreground",
+  low: "bg-secondary text-secondary-foreground",
+  minimal: "bg-muted text-muted-foreground",
+};
+
 function formatPostedAgo(days: number): string {
   if (days === 0) return "Today";
   if (days === 1) return "1 day ago";
   return `${days} days ago`;
 }
 
-const JobCard = ({ job, isSaved, onToggleSave, onView }: JobCardProps) => {
+const JobCard = React.memo(({ job, isSaved, matchScore, onToggleSave, onView }: JobCardProps) => {
   return (
     <Card className="transition-shadow duration-normal hover:shadow-md">
       <CardContent className="p-6">
@@ -37,9 +47,16 @@ const JobCard = ({ job, isSaved, onToggleSave, onView }: JobCardProps) => {
               {job.company}
             </p>
           </div>
-          <Badge variant={sourceVariant[job.source] ?? "outline"} className="shrink-0">
-            {job.source}
-          </Badge>
+          <div className="flex items-center gap-2 shrink-0">
+            {matchScore != null && (
+              <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${tierStyles[getScoreTier(matchScore)]}`}>
+                {matchScore}%
+              </span>
+            )}
+            <Badge variant={sourceVariant[job.source] ?? "outline"}>
+              {job.source}
+            </Badge>
+          </div>
         </div>
 
         {/* Meta row */}
@@ -82,6 +99,8 @@ const JobCard = ({ job, isSaved, onToggleSave, onView }: JobCardProps) => {
       </CardContent>
     </Card>
   );
-};
+});
+
+JobCard.displayName = "JobCard";
 
 export default JobCard;

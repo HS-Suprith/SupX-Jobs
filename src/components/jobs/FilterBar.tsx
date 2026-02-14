@@ -26,7 +26,7 @@ const locations = ["All", "Bangalore", "Chennai", "Hyderabad", "Mumbai", "Pune",
 const modes = ["All", "Remote", "Hybrid", "Onsite"];
 const experiences = ["All", "Fresher", "0-1", "1-3", "3-5"];
 const sources = ["All", "LinkedIn", "Naukri", "Indeed"];
-const sorts = ["Latest", "Oldest"];
+const sorts = ["Latest", "Oldest", "Match Score", "Salary"];
 
 const FilterBar = ({ filters, onChange }: FilterBarProps) => {
   const update = (key: keyof Filters, value: string) =>
@@ -89,7 +89,7 @@ const FilterBar = ({ filters, onChange }: FilterBarProps) => {
       </Select>
 
       <Select value={filters.sort} onValueChange={(v) => update("sort", v)}>
-        <SelectTrigger className="w-full md:w-[110px]">
+        <SelectTrigger className="w-full md:w-[130px]">
           <SelectValue placeholder="Sort" />
         </SelectTrigger>
         <SelectContent>
