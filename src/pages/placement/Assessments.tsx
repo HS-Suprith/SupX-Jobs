@@ -1,25 +1,21 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import {
   Search,
   ArrowLeft,
   CheckCircle2,
-  HelpCircle,
   Calendar,
   MessageSquare,
   ClipboardList,
+  Copy,
+  Download,
+  ArrowRight,
+  AlertTriangle,
 } from "lucide-react";
 import { analyzeJD, type AnalysisResult } from "@/lib/placement-analyzer";
 import { usePlacementHistory } from "@/hooks/use-placement-history";
@@ -81,13 +77,13 @@ const AnalysisForm = ({ onAnalyze }: { onAnalyze: (r: AnalysisResult) => void })
   );
 };
 
-/* ── Readiness Ring (small) ── */
+/* ── Readiness Ring ── */
 const MiniRing = ({ score }: { score: number }) => {
   const size = 120;
   const stroke = 8;
   const radius = (size - stroke) / 2;
   const circ = 2 * Math.PI * radius;
-  const offset = circ - (score / 100) * circ;
+  const offset = circ - (Math.max(0, Math.min(score, 100)) / 100) * circ;
 
   return (
     <div className="relative flex items-center justify-center">
@@ -96,15 +92,120 @@ const MiniRing = ({ score }: { score: number }) => {
         <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="hsl(var(--primary))" strokeWidth={stroke} strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={offset} className="transition-all duration-[600ms] ease-in-out" />
       </svg>
       <div className="absolute flex flex-col items-center">
-        <span className="font-heading text-headline text-foreground">{score}</span>
+        <span className="font-heading text-headline text-foreground">{Math.max(0, Math.min(score, 100))}</span>
         <span className="text-caption text-muted-foreground -mt-1">Score</span>
       </div>
     </div>
   );
 };
 
+/* ── Export helpers ── */
+function planToText(result: AnalysisResult): string {
+  return result.plan
+    .map((d) => `${d.day}: ${d.focus}\n${d.tasks.map((t) => `  • ${t}`).join("\n")}`)
+    .join("\n\n");
+}
+
+function checklistToText(result: AnalysisResult): string {
+  return result.checklist
+    .map((r) => `Round ${r.round}: ${r.title}\n${r.items.map((i) => `  □ ${i}`).join("\n")}`)
+    .join("\n\n");
+}
+
+function questionsToText(result: AnalysisResult): string {
+  return result.questions.map((q, i) => `${i + 1}. ${q}`).join("\n");
+}
+
+function fullExportText(result: AnalysisResult, confidenceMap: Record<string, "know" | "practice">, liveScore: number): string {
+  const header = `${result.company || "Company"} — ${result.role || "Role"}\nAnalyzed: ${new Date(result.createdAt).toLocaleDateString()}\nReadiness Score: ${liveScore}/100\n`;
+
+  const skills = result.extractedSkills
+    .map((cat) => `${cat.name}:\n${cat.skills.map((s) => `  ${confidenceMap[s] === "know" ? "✓" : "○"} ${s}`).join("\n")}`)
+    .join("\n\n");
+
+  return [
+    header,
+    "── KEY SKILLS ──\n" + skills,
+    "── 7-DAY PLAN ──\n" + planToText(result),
+    "── ROUND-WISE CHECKLIST ──\n" + checklistToText(result),
+    "── LIKELY INTERVIEW QUESTIONS ──\n" + questionsToText(result),
+  ].join("\n\n");
+}
+
+async function copyText(text: string, label: string) {
+  await navigator.clipboard.writeText(text);
+  toast.success(`${label} copied to clipboard`);
+}
+
+function downloadTxt(text: string, filename: string) {
+  const blob = new Blob([text], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast.success("File downloaded");
+}
+
 /* ── Results View ── */
-const ResultsView = ({ result, onBack }: { result: AnalysisResult; onBack: () => void }) => {
+const ResultsView = ({
+  result,
+  onBack,
+  onUpdate,
+}: {
+  result: AnalysisResult;
+  onBack: () => void;
+  onUpdate: (updated: AnalysisResult) => void;
+}) => {
+  const allSkills = useMemo(
+    () => result.extractedSkills.flatMap((c) => c.skills),
+    [result.extractedSkills],
+  );
+
+  // Initialize confidence map — default all to "practice"
+  const [confidenceMap, setConfidenceMap] = useState<Record<string, "know" | "practice">>(() => {
+    const existing = result.skillConfidenceMap || {};
+    const map: Record<string, "know" | "practice"> = {};
+    for (const s of allSkills) {
+      map[s] = existing[s] || "practice";
+    }
+    return map;
+  });
+
+  // Live score: base + adjustments
+  const liveScore = useMemo(() => {
+    const base = result.readinessScore;
+    let adj = 0;
+    for (const s of allSkills) {
+      adj += confidenceMap[s] === "know" ? 2 : -2;
+    }
+    return Math.max(0, Math.min(100, base + adj));
+  }, [confidenceMap, result.readinessScore, allSkills]);
+
+  const toggleSkill = useCallback(
+    (skill: string) => {
+      setConfidenceMap((prev) => {
+        const next = {
+          ...prev,
+          [skill]: prev[skill] === "know" ? ("practice" as const) : ("know" as const),
+        };
+        // Persist back to history
+        const updated: AnalysisResult = { ...result, skillConfidenceMap: next };
+        onUpdate(updated);
+        return next;
+      });
+    },
+    [result, onUpdate],
+  );
+
+  const weakSkills = useMemo(
+    () => allSkills.filter((s) => confidenceMap[s] === "practice").slice(0, 3),
+    [allSkills, confidenceMap],
+  );
+
+  const exportFilename = `${(result.company || "analysis").toLowerCase().replace(/\s+/g, "-")}-prep.txt`;
+
   return (
     <div>
       <Button variant="ghost" size="sm" onClick={onBack} className="mb-4 -ml-2 gap-1.5 text-muted-foreground">
@@ -121,24 +222,47 @@ const ResultsView = ({ result, onBack }: { result: AnalysisResult; onBack: () =>
             Analyzed {new Date(result.createdAt).toLocaleDateString()}
           </p>
         </div>
-        <MiniRing score={result.readinessScore} />
+        <MiniRing score={liveScore} />
       </div>
 
-      {/* A) Extracted Skills */}
+      {/* A) Interactive Skills */}
       <Card className="mt-8">
         <CardHeader>
           <CardTitle className="text-caption font-body font-medium text-muted-foreground uppercase tracking-wider">
             Key Skills Extracted
           </CardTitle>
+          <p className="text-caption text-muted-foreground mt-1">Click a skill to toggle your confidence level.</p>
         </CardHeader>
         <CardContent className="space-y-4">
           {result.extractedSkills.map((cat) => (
             <div key={cat.name}>
               <p className="text-caption font-medium text-foreground mb-2">{cat.name}</p>
               <div className="flex flex-wrap gap-2">
-                {cat.skills.map((s) => (
-                  <Badge key={s} variant="secondary">{s}</Badge>
-                ))}
+                {cat.skills.map((s) => {
+                  const isKnown = confidenceMap[s] === "know";
+                  return (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => toggleSkill(s)}
+                      className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-overline font-medium uppercase tracking-wider transition-colors duration-normal cursor-pointer ${
+                        isKnown
+                          ? "border-success/40 bg-success/10 text-success"
+                          : "border-warning/40 bg-warning/10 text-warning-foreground"
+                      }`}
+                    >
+                      {isKnown ? (
+                        <CheckCircle2 className="h-3 w-3" />
+                      ) : (
+                        <AlertTriangle className="h-3 w-3" />
+                      )}
+                      {s}
+                      <span className="text-[10px] opacity-70 normal-case tracking-normal ml-0.5">
+                        {isKnown ? "I know" : "Practice"}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -147,10 +271,13 @@ const ResultsView = ({ result, onBack }: { result: AnalysisResult; onBack: () =>
 
       {/* B) Round-wise Checklist */}
       <Card className="mt-6">
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-caption font-body font-medium text-muted-foreground uppercase tracking-wider">
             <ClipboardList className="h-4 w-4" /> Round-wise Preparation
           </CardTitle>
+          <Button variant="ghost" size="sm" onClick={() => copyText(checklistToText(result), "Checklist")} className="gap-1.5 text-muted-foreground">
+            <Copy className="h-3.5 w-3.5" /> Copy
+          </Button>
         </CardHeader>
         <CardContent className="space-y-6">
           {result.checklist.map((round) => (
@@ -173,10 +300,13 @@ const ResultsView = ({ result, onBack }: { result: AnalysisResult; onBack: () =>
 
       {/* C) 7-Day Plan */}
       <Card className="mt-6">
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-caption font-body font-medium text-muted-foreground uppercase tracking-wider">
             <Calendar className="h-4 w-4" /> 7-Day Preparation Plan
           </CardTitle>
+          <Button variant="ghost" size="sm" onClick={() => copyText(planToText(result), "7-day plan")} className="gap-1.5 text-muted-foreground">
+            <Copy className="h-3.5 w-3.5" /> Copy
+          </Button>
         </CardHeader>
         <CardContent className="space-y-6">
           {result.plan.map((day) => (
@@ -197,10 +327,13 @@ const ResultsView = ({ result, onBack }: { result: AnalysisResult; onBack: () =>
 
       {/* D) Interview Questions */}
       <Card className="mt-6">
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-caption font-body font-medium text-muted-foreground uppercase tracking-wider">
             <MessageSquare className="h-4 w-4" /> Likely Interview Questions
           </CardTitle>
+          <Button variant="ghost" size="sm" onClick={() => copyText(questionsToText(result), "Questions")} className="gap-1.5 text-muted-foreground">
+            <Copy className="h-3.5 w-3.5" /> Copy
+          </Button>
         </CardHeader>
         <CardContent>
           <ol className="space-y-3">
@@ -213,13 +346,49 @@ const ResultsView = ({ result, onBack }: { result: AnalysisResult; onBack: () =>
           </ol>
         </CardContent>
       </Card>
+
+      {/* Export bar */}
+      <Card className="mt-6">
+        <CardContent className="p-5 flex flex-wrap gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              downloadTxt(fullExportText(result, confidenceMap, liveScore), exportFilename)
+            }
+            className="gap-1.5"
+          >
+            <Download className="h-3.5 w-3.5" /> Download as TXT
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Action Next */}
+      {weakSkills.length > 0 && (
+        <Card className="mt-6 border-primary/20">
+          <CardContent className="p-6">
+            <p className="font-heading text-body font-medium text-foreground mb-3">What to do next</p>
+            <p className="text-caption text-muted-foreground mb-4">
+              You have {allSkills.filter((s) => confidenceMap[s] === "practice").length} skills marked as "Need practice". Focus on these first:
+            </p>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {weakSkills.map((s) => (
+                <Badge key={s} variant="warning">{s}</Badge>
+              ))}
+            </div>
+            <p className="text-body font-medium text-foreground flex items-center gap-2">
+              <ArrowRight className="h-4 w-4 text-primary" /> Start Day 1 plan now.
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
 
 /* ── Page ── */
 const Assessments = () => {
-  const { save, history } = usePlacementHistory();
+  const { save, update, history } = usePlacementHistory();
   const [currentResult, setCurrentResult] = useState<AnalysisResult | null>(null);
 
   // Check if we have a selected history item in sessionStorage
@@ -238,8 +407,22 @@ const Assessments = () => {
     setCurrentResult(result);
   };
 
+  const handleUpdate = useCallback(
+    (updated: AnalysisResult) => {
+      update(updated);
+      setCurrentResult(updated);
+    },
+    [update],
+  );
+
   if (currentResult) {
-    return <ResultsView result={currentResult} onBack={() => setCurrentResult(null)} />;
+    return (
+      <ResultsView
+        result={currentResult}
+        onBack={() => setCurrentResult(null)}
+        onUpdate={handleUpdate}
+      />
+    );
   }
 
   return <AnalysisForm onAnalyze={handleAnalyze} />;

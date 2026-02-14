@@ -16,6 +16,7 @@ export interface AnalysisResult {
   plan: DayPlan[];
   questions: string[];
   readinessScore: number;
+  skillConfidenceMap?: Record<string, "know" | "practice">;
 }
 
 export interface RoundChecklist {

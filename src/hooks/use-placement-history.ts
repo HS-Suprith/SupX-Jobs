@@ -21,11 +21,15 @@ export function usePlacementHistory() {
     setHistory((prev) => [entry, ...prev]);
   };
 
+  const update = (updated: AnalysisResult) => {
+    setHistory((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
+  };
+
   const remove = (id: string) => {
     setHistory((prev) => prev.filter((e) => e.id !== id));
   };
 
   const clearAll = () => setHistory([]);
 
-  return { history, save, remove, clearAll };
+  return { history, save, update, remove, clearAll };
 }
