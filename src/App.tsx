@@ -56,7 +56,7 @@ const App = () => (
             <Route path="/placement/practice" element={<Practice />} />
             <Route path="/placement/assessments" element={<Assessments />} />
             <Route path="/placement/resources" element={<Resources />} />
-            <Route path="/placement/profile" element={<PlacementProfile />} />
+            <Route path="/placement/proof" element={<PlacementProfile />} />
           </Route>
 
           {/* AI Resume Builder — Build Track (Project 3) */}
