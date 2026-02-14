@@ -31,6 +31,17 @@ const AnalysisForm = ({ onAnalyze }: { onAnalyze: (r: AnalysisResult) => void })
   const [role, setRole] = useState("");
   const [jdText, setJdText] = useState("");
 
+  const [jdWarning, setJdWarning] = useState("");
+
+  const handleJdChange = (val: string) => {
+    setJdText(val);
+    if (val.trim().length > 0 && val.trim().length < 200) {
+      setJdWarning("This JD is too short to analyze deeply. Paste the full JD for better output.");
+    } else {
+      setJdWarning("");
+    }
+  };
+
   const handleSubmit = () => {
     if (!jdText.trim()) {
       toast.error("Please paste a job description to analyze.");
@@ -67,10 +78,18 @@ const AnalysisForm = ({ onAnalyze }: { onAnalyze: (r: AnalysisResult) => void })
               rows={10}
               placeholder="Paste the full job description here..."
               value={jdText}
-              onChange={(e) => setJdText(e.target.value)}
+              onChange={(e) => handleJdChange(e.target.value)}
               className="resize-y"
+              required
             />
-            <p className="text-caption text-muted-foreground">{jdText.length} characters</p>
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-caption text-muted-foreground">{jdText.length} characters</p>
+              {jdWarning && (
+                <p className="text-caption text-warning-foreground flex items-center gap-1.5">
+                  <AlertTriangle className="h-3 w-3" /> {jdWarning}
+                </p>
+              )}
+            </div>
           </div>
           <Button onClick={handleSubmit} className="gap-2">
             <Search className="h-4 w-4" /> Analyze JD
@@ -167,12 +186,12 @@ const ResultsView = ({
     [result.extractedSkills],
   );
 
-  // Initialize confidence map — default all to "practice"
+  // Initialize confidence map from persisted data
   const [confidenceMap, setConfidenceMap] = useState<Record<string, "know" | "practice">>(() => {
-    const existing = result.skillConfidenceMap || {};
+    const existing = result.skillConfidenceMap ?? {};
     const map: Record<string, "know" | "practice"> = {};
     for (const s of allSkills) {
-      map[s] = existing[s] || "practice";
+      map[s] = existing[s] ?? "practice";
     }
     return map;
   });

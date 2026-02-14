@@ -25,6 +25,7 @@ export interface RoundFlowStep {
 export interface AnalysisResult {
   id: string;
   createdAt: string;
+  updatedAt: string;
   company: string;
   role: string;
   jdText: string;
@@ -33,7 +34,7 @@ export interface AnalysisResult {
   plan: DayPlan[];
   questions: string[];
   readinessScore: number;
-  skillConfidenceMap?: Record<string, "know" | "practice">;
+  skillConfidenceMap: Record<string, "know" | "practice">;
   companyIntel?: CompanyIntel;
 }
 
@@ -109,7 +110,7 @@ export function extractSkills(jdText: string): SkillCategory[] {
   }
 
   if (categories.length === 0) {
-    categories.push({ name: "General", skills: ["General fresher stack"] });
+    categories.push({ name: "General", skills: ["Communication", "Problem solving", "Basic coding", "Projects"] });
   }
 
   return categories;
@@ -461,9 +462,20 @@ export function analyzeJD(company: string, role: string, jdText: string): Analys
   const questions = generateQuestions(extractedSkills);
   const companyIntel = generateCompanyIntel(company, jdText, extractedSkills);
 
+  // Build default confidence map — all "practice"
+  const skillConfidenceMap: Record<string, "know" | "practice"> = {};
+  for (const cat of extractedSkills) {
+    for (const s of cat.skills) {
+      skillConfidenceMap[s] = "practice";
+    }
+  }
+
+  const now = new Date().toISOString();
+
   return {
     id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
+    createdAt: now,
+    updatedAt: now,
     company: company.trim(),
     role: role.trim(),
     jdText,
@@ -472,6 +484,35 @@ export function analyzeJD(company: string, role: string, jdText: string): Analys
     plan,
     questions,
     readinessScore,
+    skillConfidenceMap,
     companyIntel,
   };
+}
+
+/** Validate and sanitize a history entry loaded from storage. Returns null if unrecoverable. */
+export function validateEntry(raw: unknown): AnalysisResult | null {
+  try {
+    if (!raw || typeof raw !== "object") return null;
+    const e = raw as Record<string, unknown>;
+    if (typeof e.id !== "string" || typeof e.jdText !== "string" || !Array.isArray(e.extractedSkills)) return null;
+
+    // Ensure all required fields have defaults
+    return {
+      id: e.id as string,
+      createdAt: (e.createdAt as string) || new Date().toISOString(),
+      updatedAt: (e.updatedAt as string) || (e.createdAt as string) || new Date().toISOString(),
+      company: (e.company as string) || "",
+      role: (e.role as string) || "",
+      jdText: e.jdText as string,
+      extractedSkills: e.extractedSkills as SkillCategory[],
+      checklist: (e.checklist as RoundChecklist[]) || [],
+      plan: (e.plan as DayPlan[]) || [],
+      questions: (e.questions as string[]) || [],
+      readinessScore: typeof e.readinessScore === "number" ? e.readinessScore : 35,
+      skillConfidenceMap: (e.skillConfidenceMap as Record<string, "know" | "practice">) || {},
+      companyIntel: e.companyIntel as CompanyIntel | undefined,
+    };
+  } catch {
+    return null;
+  }
 }
