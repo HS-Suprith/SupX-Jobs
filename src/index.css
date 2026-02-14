@@ -13,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 7%;
 
-    --primary: 0 100% 27%;
+    --primary: 0 85% 40%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 40 12% 90%;
@@ -22,7 +22,7 @@
     --muted: 40 12% 92%;
     --muted-foreground: 0 0% 40%;
 
-    --accent: 0 100% 27%;
+    --accent: 0 85% 40%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
@@ -36,18 +36,18 @@
 
     --border: 40 10% 86%;
     --input: 40 10% 86%;
-    --ring: 0 100% 27%;
+    --ring: 0 85% 40%;
 
     --radius: 6px;
 
     --sidebar-background: 40 20% 96%;
     --sidebar-foreground: 0 0% 7%;
-    --sidebar-primary: 0 100% 27%;
-    --sidebar-primary-foreground: 40 20% 96%;
+    --sidebar-primary: 0 85% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 40 12% 90%;
     --sidebar-accent-foreground: 0 0% 7%;
     --sidebar-border: 40 10% 86%;
-    --sidebar-ring: 0 100% 27%;
+    --sidebar-ring: 0 85% 40%;
 
     --font-heading: 'DM Serif Display', Georgia, serif;
     --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
@@ -127,6 +127,22 @@
   .text-prose {
     max-width: 720px;
   }
+
+  .text-primary-foreground {
+    color: hsl(var(--primary-foreground)) !important;
+  }
+
+  .text-accent-foreground {
+    color: hsl(var(--accent-foreground)) !important;
+  }
+
+  .text-success-foreground {
+    color: hsl(var(--success-foreground)) !important;
+  }
+
+  .text-destructive-foreground {
+    color: hsl(var(--destructive-foreground)) !important;
+  }
 }
 
 /* ── Print styles for resume export ── */
@@ -195,7 +211,7 @@
   --popover: 0 0% 100%;
   --popover-foreground: 0 0% 7%;
 
-  --primary: 0 100% 27%;
+  --primary: 0 85% 40%;
   --primary-foreground: 0 0% 100%;
 
   --secondary: 40 12% 90%;
@@ -204,7 +220,7 @@
   --muted: 40 12% 92%;
   --muted-foreground: 0 0% 40%;
 
-  --accent: 0 100% 27%;
+  --accent: 0 85% 40%;
   --accent-foreground: 0 0% 100%;
 
   --destructive: 0 72% 51%;
@@ -218,16 +234,16 @@
 
   --border: 40 10% 86%;
   --input: 40 10% 86%;
-  --ring: 0 100% 27%;
+  --ring: 0 85% 40%;
 
   --sidebar-background: 40 20% 96%;
   --sidebar-foreground: 0 0% 7%;
-  --sidebar-primary: 0 100% 27%;
-  --sidebar-primary-foreground: 40 20% 96%;
+  --sidebar-primary: 0 85% 40%;
+  --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 40 12% 90%;
   --sidebar-accent-foreground: 0 0% 7%;
   --sidebar-border: 40 10% 86%;
-  --sidebar-ring: 0 100% 27%;
+  --sidebar-ring: 0 85% 40%;
 }
 
 .dark .placement-theme {

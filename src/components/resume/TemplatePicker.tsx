@@ -116,7 +116,7 @@ const TemplatePicker = ({
                 </div>
                 {isActive && (
                   <div className="absolute top-1.5 right-1.5 h-4 w-4 rounded-full bg-primary flex items-center justify-center">
-                    <Check className="h-2.5 w-2.5 text-primary-foreground" />
+                    <Check className="h-2.5 w-2.5 text-[#ffffff]" />
                   </div>
                 )}
               </button>
