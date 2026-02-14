@@ -103,16 +103,6 @@ const RbLayout = () => {
             );
           })}
 
-          <div className="border-t border-[hsl(var(--sidebar-border))] my-3" />
-
-          <NavLink
-            to="/rb/proof"
-            className="flex items-center gap-3 rounded-md px-3 py-2.5 text-caption font-medium transition-colors duration-normal hover:bg-[hsl(var(--sidebar-accent))]"
-            activeClassName="bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-primary))]"
-          >
-            <ShieldCheck className="h-4 w-4 shrink-0" />
-            Proof of Work
-          </NavLink>
         </nav>
       </aside>
 

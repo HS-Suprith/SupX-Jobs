@@ -7,7 +7,6 @@ import { ArrowLeft, Menu, X } from "lucide-react";
 const navItems = [
   { label: "Builder", to: "/resume/builder" },
   { label: "Preview", to: "/resume/preview" },
-  { label: "Proof", to: "/resume/proof" },
 ];
 
 const ResumeLayout = () => {
