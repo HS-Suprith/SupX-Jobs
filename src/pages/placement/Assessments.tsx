@@ -16,6 +16,10 @@ import {
   Download,
   ArrowRight,
   AlertTriangle,
+  Building2,
+  Users,
+  Target,
+  Info,
 } from "lucide-react";
 import { analyzeJD, type AnalysisResult } from "@/lib/placement-analyzer";
 import { usePlacementHistory } from "@/hooks/use-placement-history";
@@ -268,6 +272,77 @@ const ResultsView = ({
           ))}
         </CardContent>
       </Card>
+
+      {/* Company Intel */}
+      {result.companyIntel && (
+        <>
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-caption font-body font-medium text-muted-foreground uppercase tracking-wider">
+                <Building2 className="h-4 w-4" /> Company Intel
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="space-y-1">
+                  <p className="text-caption text-muted-foreground">Company</p>
+                  <p className="text-body font-medium text-foreground">{result.companyIntel.name}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-caption text-muted-foreground">Industry</p>
+                  <p className="text-body font-medium text-foreground">{result.companyIntel.industry}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-caption text-muted-foreground">Estimated Size</p>
+                  <p className="text-body font-medium text-foreground">{result.companyIntel.sizeLabel}</p>
+                </div>
+              </div>
+
+              <div className="border-t pt-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Target className="h-4 w-4 text-primary" />
+                  <p className="text-caption font-medium text-foreground">Typical Hiring Focus</p>
+                </div>
+                <p className="text-caption text-muted-foreground text-prose">{result.companyIntel.hiringFocus}</p>
+              </div>
+
+              <p className="text-[11px] text-muted-foreground/60 flex items-center gap-1.5 pt-2 border-t">
+                <Info className="h-3 w-3" /> Demo Mode: Company intel generated heuristically.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Round Flow Timeline */}
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-caption font-body font-medium text-muted-foreground uppercase tracking-wider">
+                <Users className="h-4 w-4" /> Expected Round Flow
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="relative pl-8">
+                {/* Vertical line */}
+                <div className="absolute left-[11px] top-1 bottom-1 w-px bg-border" />
+
+                <div className="space-y-6">
+                  {result.companyIntel.roundFlow.map((step, i) => (
+                    <div key={step.round} className="relative">
+                      {/* Dot */}
+                      <div className="absolute -left-8 top-0.5 h-6 w-6 rounded-full border-2 border-primary bg-background flex items-center justify-center">
+                        <span className="text-[10px] font-medium text-primary">{step.round}</span>
+                      </div>
+                      <div>
+                        <p className="font-heading text-body font-medium text-foreground">{step.title}</p>
+                        <p className="text-caption text-muted-foreground mt-1">{step.why}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
 
       {/* B) Round-wise Checklist */}
       <Card className="mt-6">
