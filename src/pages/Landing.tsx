@@ -9,7 +9,7 @@ const Landing = () => {
       <nav className="border-b bg-background">
         <div className="flex items-center justify-between px-10 py-4">
           <span className="font-heading text-body font-medium text-foreground">
-            KodNest
+            SupX Jobs
           </span>
           <Link to="/dashboard">
             <Button variant="outline" size="sm">Sign In</Button>
@@ -39,7 +39,7 @@ const Landing = () => {
       {/* Minimal footer */}
       <footer className="border-t px-10 py-6 text-center">
         <p className="text-caption text-muted-foreground">
-          Built with KodNest Premium Build System
+          Built with SupX Jobs
         </p>
       </footer>
     </div>
