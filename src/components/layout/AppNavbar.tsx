@@ -8,7 +8,6 @@ const navItems = [
   { label: "Saved", to: "/saved" },
   { label: "Digest", to: "/digest" },
   { label: "Settings", to: "/settings" },
-  { label: "Proof", to: "/proof" },
   { label: "Placement", to: "/placement" },
   { label: "Resume Builder", to: "/resume" },
 ];
