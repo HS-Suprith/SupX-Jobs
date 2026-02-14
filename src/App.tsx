@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 import PlacementLayout from "./layouts/PlacementLayout";
 import RbLayout from "./layouts/RbLayout";
+import ResumeLayout from "./layouts/ResumeLayout";
 import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import Saved from "./pages/Saved";
@@ -22,6 +23,10 @@ import Resources from "./pages/placement/Resources";
 import PlacementProfile from "./pages/placement/PlacementProfile";
 import RbStepPage from "./pages/rb/RbStepPage";
 import RbProof from "./pages/rb/RbProof";
+import ResumeHome from "./pages/resume/ResumeHome";
+import ResumeBuilder from "./pages/resume/ResumeBuilder";
+import ResumePreview from "./pages/resume/ResumePreview";
+import ResumeProof from "./pages/resume/ResumeProof";
 
 const queryClient = new QueryClient();
 
@@ -54,7 +59,7 @@ const App = () => (
             <Route path="/placement/profile" element={<PlacementProfile />} />
           </Route>
 
-          {/* AI Resume Builder — Project 3 */}
+          {/* AI Resume Builder — Build Track (Project 3) */}
           <Route element={<RbLayout />}>
             <Route path="/rb/01-problem" element={<RbStepPage />} />
             <Route path="/rb/02-market" element={<RbStepPage />} />
@@ -65,6 +70,14 @@ const App = () => (
             <Route path="/rb/07-test" element={<RbStepPage />} />
             <Route path="/rb/08-ship" element={<RbStepPage />} />
             <Route path="/rb/proof" element={<RbProof />} />
+          </Route>
+
+          {/* AI Resume Builder — App */}
+          <Route element={<ResumeLayout />}>
+            <Route path="/resume" element={<ResumeHome />} />
+            <Route path="/resume/builder" element={<ResumeBuilder />} />
+            <Route path="/resume/preview" element={<ResumePreview />} />
+            <Route path="/resume/proof" element={<ResumeProof />} />
           </Route>
 
           {/* Design system reference */}
