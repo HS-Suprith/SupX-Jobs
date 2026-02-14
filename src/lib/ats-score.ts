@@ -6,71 +6,95 @@ export interface AtsResult {
   suggestions: string[];
 }
 
-function wordCount(text: string): number {
-  return text.trim().split(/\s+/).filter(Boolean).length;
-}
-
-function hasQuantifiableImpact(text: string): boolean {
-  return /\d+%|\d+x|\d+k|\d+\+|\d+ /.test(text);
-}
+const ACTION_VERBS = /\b(built|led|designed|improved|developed|created|implemented|optimized|automated|managed|launched|delivered|integrated|deployed|architected|refactored|migrated|analyzed|reduced|increased|established|streamlined|collaborated|engineered)\b/i;
 
 export function computeAtsScore(resume: ResumeData): AtsResult {
   let score = 0;
   const suggestions: string[] = [];
 
-  const summaryWords = wordCount(resume.summary);
-  if (summaryWords >= 40 && summaryWords <= 120) {
-    score += 15;
-  } else {
-    suggestions.push("Write a stronger summary (40–120 words).");
-  }
-
-  if (resume.projects.length >= 2) {
+  // +10 name
+  if (resume.personal.name.trim()) {
     score += 10;
   } else {
-    suggestions.push("Add at least 2 projects.");
+    suggestions.push("Add your full name (+10 points)");
   }
 
-  if (resume.experience.length >= 1) {
+  // +10 email
+  if (resume.personal.email.trim()) {
     score += 10;
   } else {
-    suggestions.push("Add at least 1 work experience entry.");
+    suggestions.push("Add your email address (+10 points)");
   }
 
-  const allSkills = flattenSkills(resume.skills);
-  if (allSkills.length >= 8) {
+  // +5 phone
+  if (resume.personal.phone.trim()) {
+    score += 5;
+  } else {
+    suggestions.push("Add your phone number (+5 points)");
+  }
+
+  // +10 summary > 50 chars
+  if (resume.summary.trim().length > 50) {
     score += 10;
   } else {
-    suggestions.push("Add more skills (target 8+).");
+    suggestions.push("Add a professional summary with 50+ characters (+10 points)");
   }
 
-  if (resume.links.github || resume.links.linkedin) {
+  // +10 summary contains action verbs
+  if (ACTION_VERBS.test(resume.summary)) {
     score += 10;
   } else {
-    suggestions.push("Add a GitHub or LinkedIn link.");
+    suggestions.push("Use action verbs in your summary (built, led, designed...) (+10 points)");
   }
 
-  const allBullets = [
-    ...resume.experience.map((e) => e.description),
-    ...resume.projects.map((p) => p.description),
-  ];
-  if (allBullets.some(hasQuantifiableImpact)) {
-    score += 15;
-  } else {
-    suggestions.push("Add measurable impact (numbers) in bullets.");
-  }
-
-  const hasCompleteEducation = resume.education.some(
-    (edu) => edu.institution.trim() && edu.degree.trim() && edu.year.trim()
+  // +15 at least 1 experience with bullets
+  const hasExpWithBullets = resume.experience.some(
+    (e) => e.description.trim().length > 0
   );
-  if (hasCompleteEducation) {
+  if (resume.experience.length >= 1 && hasExpWithBullets) {
+    score += 15;
+  } else {
+    suggestions.push("Add at least 1 experience entry with description (+15 points)");
+  }
+
+  // +10 at least 1 education
+  if (resume.education.length >= 1) {
     score += 10;
   } else {
-    suggestions.push("Complete all education fields (institution, degree, year).");
+    suggestions.push("Add at least 1 education entry (+10 points)");
+  }
+
+  // +10 at least 5 skills
+  const allSkills = flattenSkills(resume.skills);
+  if (allSkills.length >= 5) {
+    score += 10;
+  } else {
+    suggestions.push("Add at least 5 skills (+10 points)");
+  }
+
+  // +10 at least 1 project
+  if (resume.projects.length >= 1) {
+    score += 10;
+  } else {
+    suggestions.push("Add at least 1 project (+10 points)");
+  }
+
+  // +5 LinkedIn
+  if (resume.links.linkedin.trim()) {
+    score += 5;
+  } else {
+    suggestions.push("Add your LinkedIn profile (+5 points)");
+  }
+
+  // +5 GitHub
+  if (resume.links.github.trim()) {
+    score += 5;
+  } else {
+    suggestions.push("Add your GitHub profile (+5 points)");
   }
 
   return {
     score: Math.min(score, 100),
-    suggestions: suggestions.slice(0, 3),
+    suggestions,
   };
 }
