@@ -47,7 +47,7 @@ const Landing = () => {
             Precision-matched job discovery delivered daily at 9AM.
             Set your preferences once, and we handle the rest.
           </p>
-          <Link to="/settings" className="inline-block mt-10">
+          <Link to="/dashboard" className="inline-block mt-10">
             <Button size="lg" className="gap-2">
               Start Tracking
               <ArrowRight className="h-4 w-4" />
