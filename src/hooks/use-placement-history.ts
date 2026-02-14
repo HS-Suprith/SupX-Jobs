@@ -1,13 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { AnalysisResult } from "@/lib/placement-analyzer";
+import { validateEntry } from "@/lib/placement-analyzer";
+import { toast } from "sonner";
 
 const STORAGE_KEY = "placementAnalysisHistory";
 
 export function usePlacementHistory() {
+  const corruptNotified = useRef(false);
+
   const [history, setHistory] = useState<AnalysisResult[]>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
+      if (!stored) return [];
+      const parsed = JSON.parse(stored) as unknown[];
+      const valid: AnalysisResult[] = [];
+      let hadCorrupt = false;
+      for (const raw of parsed) {
+        const entry = validateEntry(raw);
+        if (entry) {
+          valid.push(entry);
+        } else {
+          hadCorrupt = true;
+        }
+      }
+      if (hadCorrupt && !corruptNotified.current) {
+        corruptNotified.current = true;
+        // Defer toast so it fires after mount
+        setTimeout(() => toast.warning("One saved entry couldn't be loaded. Create a new analysis."), 100);
+      }
+      return valid;
     } catch {
       return [];
     }
@@ -22,7 +43,8 @@ export function usePlacementHistory() {
   };
 
   const update = (updated: AnalysisResult) => {
-    setHistory((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
+    const withTimestamp = { ...updated, updatedAt: new Date().toISOString() };
+    setHistory((prev) => prev.map((e) => (e.id === withTimestamp.id ? withTimestamp : e)));
   };
 
   const remove = (id: string) => {

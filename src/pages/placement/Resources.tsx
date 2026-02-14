@@ -54,7 +54,7 @@ const Resources = () => {
                     <p className="font-heading text-body font-medium text-foreground truncate">
                       {entry.company || "Unknown"} — {entry.role || "Role"}
                     </p>
-                    <Badge variant="outline">{entry.readinessScore}/100</Badge>
+                    <Badge variant="outline">Score: {entry.readinessScore}/100</Badge>
                   </div>
                   <p className="text-caption text-muted-foreground mt-1">
                     {new Date(entry.createdAt).toLocaleDateString()} · {entry.extractedSkills.flatMap((s) => s.skills).length} skills detected
