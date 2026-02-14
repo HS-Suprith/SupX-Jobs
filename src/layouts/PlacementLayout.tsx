@@ -27,7 +27,7 @@ const PlacementLayout = () => {
       <aside className="hidden md:flex w-60 flex-col border-r bg-[hsl(var(--sidebar-background))] text-[hsl(var(--sidebar-foreground))]">
         <div className="px-6 py-5 border-b border-[hsl(var(--sidebar-border))]">
           <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")} className="-ml-2 mb-3 gap-1.5 text-[hsl(var(--sidebar-foreground))]/70 hover:text-[hsl(var(--sidebar-foreground))]">
-            <ArrowLeft className="h-3.5 w-3.5" /> Job Tracker
+            <ArrowLeft className="h-3.5 w-3.5" /> Back
           </Button>
           <span className="font-heading text-body font-medium block">Placement Prep</span>
         </div>
