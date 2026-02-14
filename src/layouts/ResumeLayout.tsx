@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Menu, X } from "lucide-react";
@@ -11,7 +11,10 @@ const navItems = [
 
 const ResumeLayout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const isHome = location.pathname === "/resume";
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
@@ -31,32 +34,36 @@ const ResumeLayout = () => {
             </span>
           </div>
 
-          <ul className="hidden md:flex items-center gap-8">
-            {navItems.map((item) => (
-              <li key={item.to}>
-                <NavLink
-                  to={item.to}
-                  className="text-caption font-medium text-muted-foreground pb-1 border-b-2 border-transparent transition-colors duration-normal"
-                  activeClassName="text-primary border-primary"
-                >
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+          {!isHome && (
+            <ul className="hidden md:flex items-center gap-8">
+              {navItems.map((item) => (
+                <li key={item.to}>
+                  <NavLink
+                    to={item.to}
+                    className="text-caption font-medium text-muted-foreground pb-1 border-b-2 border-transparent transition-colors duration-normal"
+                    activeClassName="text-primary border-primary"
+                  >
+                    {item.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          )}
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
-          >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
+          {!isHome && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="Toggle menu"
+            >
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          )}
         </div>
 
-        {mobileOpen && (
+        {!isHome && mobileOpen && (
           <ul className="flex flex-col gap-2 px-10 pb-4 md:hidden">
             {navItems.map((item) => (
               <li key={item.to}>
