@@ -83,3 +83,49 @@
     max-width: 720px;
   }
 }
+
+/* Placement Platform purple theme */
+.placement-theme {
+  --background: 240 20% 97%;
+  --foreground: 240 10% 10%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 10%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 10%;
+
+  --primary: 245 58% 51%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 240 12% 92%;
+  --secondary-foreground: 240 10% 10%;
+
+  --muted: 240 12% 94%;
+  --muted-foreground: 240 5% 46%;
+
+  --accent: 245 58% 51%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+
+  --success: 140 25% 42%;
+  --success-foreground: 0 0% 100%;
+
+  --warning: 38 60% 50%;
+  --warning-foreground: 240 10% 10%;
+
+  --border: 240 10% 88%;
+  --input: 240 10% 88%;
+  --ring: 245 58% 51%;
+
+  --sidebar-background: 245 40% 16%;
+  --sidebar-foreground: 240 20% 92%;
+  --sidebar-primary: 245 58% 61%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 245 30% 22%;
+  --sidebar-accent-foreground: 240 20% 92%;
+  --sidebar-border: 245 30% 24%;
+  --sidebar-ring: 245 58% 51%;
+}
