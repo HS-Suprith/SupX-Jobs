@@ -1,12 +1,14 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
   Code2,
   ClipboardCheck,
   BookOpen,
   User,
+  ArrowLeft,
 } from "lucide-react";
 
 const sidebarItems = [
@@ -18,12 +20,16 @@ const sidebarItems = [
 ];
 
 const PlacementLayout = () => {
+  const navigate = useNavigate();
   return (
     <div className="placement-theme flex min-h-screen bg-background text-foreground">
       {/* Sidebar */}
       <aside className="hidden md:flex w-60 flex-col border-r bg-[hsl(var(--sidebar-background))] text-[hsl(var(--sidebar-foreground))]">
         <div className="px-6 py-5 border-b border-[hsl(var(--sidebar-border))]">
-          <span className="font-heading text-body font-medium">Placement Prep</span>
+          <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")} className="-ml-2 mb-3 gap-1.5 text-[hsl(var(--sidebar-foreground))]/70 hover:text-[hsl(var(--sidebar-foreground))]">
+            <ArrowLeft className="h-3.5 w-3.5" /> Job Tracker
+          </Button>
+          <span className="font-heading text-body font-medium block">Placement Prep</span>
         </div>
         <nav className="flex-1 py-4 px-4 space-y-1">
           {sidebarItems.map((item) => (
