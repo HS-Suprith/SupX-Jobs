@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import type { ResumeData } from "@/data/resume-types";
+import { flattenSkills } from "@/data/resume-types";
 import { computeAtsScore } from "@/lib/ats-score";
 import { AlertCircle, TrendingUp } from "lucide-react";
 
@@ -27,8 +28,8 @@ function computeImprovements(resume: ResumeData): string[] {
   if (wordCount(resume.summary) < 40)
     improvements.push("Expand your summary to at least 40 words.");
 
-  const skillList = resume.skills.split(",").map((s) => s.trim()).filter(Boolean);
-  if (skillList.length < 8)
+  const allSkills = flattenSkills(resume.skills);
+  if (allSkills.length < 8)
     improvements.push("Add more skills — target at least 8.");
 
   if (resume.experience.length === 0)
@@ -56,33 +57,14 @@ const AtsScorePanel = ({ resume }: { resume: ResumeData }) => {
 
   return (
     <div className="space-y-6">
-      {/* Score ring */}
       <div className="flex flex-col items-center">
         <p className="text-caption font-medium text-muted-foreground uppercase tracking-wider mb-4">
           ATS Readiness Score
         </p>
         <div className="relative">
           <svg width={size} height={size} className="-rotate-90">
-            <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              fill="none"
-              stroke="hsl(var(--muted))"
-              strokeWidth={stroke}
-            />
-            <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              fill="none"
-              stroke={color}
-              strokeWidth={stroke}
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={offset}
-              className="transition-all duration-500 ease-in-out"
-            />
+            <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="hsl(var(--muted))" strokeWidth={stroke} />
+            <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={offset} className="transition-all duration-500 ease-in-out" />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="font-heading text-headline text-foreground">{score}</span>
@@ -91,12 +73,9 @@ const AtsScorePanel = ({ resume }: { resume: ResumeData }) => {
         </div>
       </div>
 
-      {/* Suggestions */}
       {suggestions.length > 0 && (
         <div className="space-y-2">
-          <p className="text-caption font-medium text-muted-foreground uppercase tracking-wider">
-            Suggestions
-          </p>
+          <p className="text-caption font-medium text-muted-foreground uppercase tracking-wider">Suggestions</p>
           <ul className="space-y-2">
             {suggestions.map((s, i) => (
               <li key={i} className="flex items-start gap-2 text-caption text-muted-foreground">
@@ -108,12 +87,9 @@ const AtsScorePanel = ({ resume }: { resume: ResumeData }) => {
         </div>
       )}
 
-      {/* Top 3 Improvements */}
       {improvements.length > 0 && (
         <div className="space-y-2 border-t pt-5">
-          <p className="text-caption font-medium text-muted-foreground uppercase tracking-wider">
-            Top 3 Improvements
-          </p>
+          <p className="text-caption font-medium text-muted-foreground uppercase tracking-wider">Top 3 Improvements</p>
           <ul className="space-y-2">
             {improvements.map((imp, i) => (
               <li key={i} className="flex items-start gap-2 text-caption text-muted-foreground">

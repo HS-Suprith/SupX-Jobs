@@ -24,7 +24,15 @@ export interface ResumeProject {
   id: string;
   title: string;
   description: string;
-  techStack: string;
+  techStack: string[];
+  liveUrl: string;
+  githubUrl: string;
+}
+
+export interface ResumeSkills {
+  technical: string[];
+  soft: string[];
+  tools: string[];
 }
 
 export interface ResumeLinks {
@@ -38,7 +46,7 @@ export interface ResumeData {
   education: ResumeEducation[];
   experience: ResumeExperience[];
   projects: ResumeProject[];
-  skills: string;
+  skills: ResumeSkills;
   links: ResumeLinks;
 }
 
@@ -48,7 +56,7 @@ export const emptyResume: ResumeData = {
   education: [],
   experience: [],
   projects: [],
-  skills: "",
+  skills: { technical: [], soft: [], tools: [] },
   links: { github: "", linkedin: "" },
 };
 
@@ -85,19 +93,62 @@ export const sampleResume: ResumeData = {
       title: "Job Notification Tracker",
       description:
         "A React-based job tracker with intelligent match scoring, daily digests, and localStorage persistence.",
-      techStack: "React, TypeScript, Tailwind CSS",
+      techStack: ["React", "TypeScript", "Tailwind CSS"],
+      liveUrl: "",
+      githubUrl: "https://github.com/arjunsharma/job-tracker",
     },
     {
       id: "proj-2",
       title: "Placement Readiness Platform",
       description:
         "JD analyzer with heuristic skill extraction, round mapping, interactive scoring, and export tools.",
-      techStack: "React, TypeScript, Tailwind CSS",
+      techStack: ["React", "TypeScript", "Tailwind CSS"],
+      liveUrl: "",
+      githubUrl: "",
     },
   ],
-  skills: "JavaScript, TypeScript, React, Node.js, Python, SQL, Git, Docker, REST APIs, DSA",
+  skills: {
+    technical: ["JavaScript", "TypeScript", "React", "Node.js", "Python", "SQL"],
+    soft: ["Problem Solving", "Communication"],
+    tools: ["Git", "Docker", "REST APIs"],
+  },
   links: {
     github: "https://github.com/arjunsharma",
     linkedin: "https://linkedin.com/in/arjunsharma",
   },
 };
+
+/** Helper: flatten all skills into a single array */
+export function flattenSkills(skills: ResumeSkills | string): string[] {
+  if (typeof skills === "string") {
+    // backward compat with old comma-separated format
+    return skills.split(",").map((s) => s.trim()).filter(Boolean);
+  }
+  return [...skills.technical, ...skills.soft, ...skills.tools];
+}
+
+/** Helper: migrate old string skills to new format */
+export function migrateSkills(skills: unknown): ResumeSkills {
+  if (typeof skills === "string") {
+    const list = skills.split(",").map((s) => s.trim()).filter(Boolean);
+    return { technical: list, soft: [], tools: [] };
+  }
+  if (skills && typeof skills === "object" && "technical" in skills) {
+    return skills as ResumeSkills;
+  }
+  return { technical: [], soft: [], tools: [] };
+}
+
+/** Helper: migrate old project techStack string to array */
+export function migrateProject(proj: any): ResumeProject {
+  return {
+    ...proj,
+    techStack: Array.isArray(proj.techStack)
+      ? proj.techStack
+      : typeof proj.techStack === "string"
+        ? proj.techStack.split(",").map((s: string) => s.trim()).filter(Boolean)
+        : [],
+    liveUrl: proj.liveUrl || "",
+    githubUrl: proj.githubUrl || "",
+  };
+}
