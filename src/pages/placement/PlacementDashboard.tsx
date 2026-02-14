@@ -132,7 +132,7 @@ const WeeklyGoals = () => (
             <div
               className={`h-8 w-8 rounded-full flex items-center justify-center text-caption font-medium ${
                 activeDays[i]
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-primary text-[#ffffff]"
                   : "bg-muted text-muted-foreground"
               }`}
             >

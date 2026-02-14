@@ -146,10 +146,10 @@ const Digest = () => {
         {/* Digest Card */}
         <Card className="overflow-hidden">
           <div className="bg-primary px-8 py-6">
-            <h1 className="font-heading text-title text-primary-foreground">
+            <h1 className="font-heading text-title text-[#ffffff]">
               Top 10 Jobs For You
             </h1>
-            <p className="mt-1 text-caption text-primary-foreground/80">
+            <p className="mt-1 text-caption text-[#ffffff]/80">
               9AM Digest — {formatDate(digest.date)}
             </p>
           </div>
