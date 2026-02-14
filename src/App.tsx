@@ -26,7 +26,7 @@ import RbProof from "./pages/rb/RbProof";
 import ResumeHome from "./pages/resume/ResumeHome";
 import ResumeBuilder from "./pages/resume/ResumeBuilder";
 import ResumePreview from "./pages/resume/ResumePreview";
-import ResumeProof from "./pages/resume/ResumeProof";
+
 
 const queryClient = new QueryClient();
 
@@ -46,7 +46,7 @@ const App = () => (
             <Route path="/saved" element={<Saved />} />
             <Route path="/digest" element={<Digest />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/proof" element={<Proof />} />
+            <Route path="/job/proof" element={<Proof />} />
           </Route>
 
           {/* Placement Platform */}
@@ -69,7 +69,7 @@ const App = () => (
             <Route path="/rb/06-build" element={<RbStepPage />} />
             <Route path="/rb/07-test" element={<RbStepPage />} />
             <Route path="/rb/08-ship" element={<RbStepPage />} />
-            <Route path="/rb/proof" element={<RbProof />} />
+            <Route path="/resume/proof" element={<RbProof />} />
           </Route>
 
           {/* AI Resume Builder — App */}
@@ -77,7 +77,7 @@ const App = () => (
             <Route path="/resume" element={<ResumeHome />} />
             <Route path="/resume/builder" element={<ResumeBuilder />} />
             <Route path="/resume/preview" element={<ResumePreview />} />
-            <Route path="/resume/proof" element={<ResumeProof />} />
+            
           </Route>
 
           {/* Design system reference */}

@@ -140,7 +140,7 @@ const RbStepPage = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate("/rb/proof")}
+                  onClick={() => navigate("/resume/proof")}
                   disabled={!isCompleted}
                   className="gap-1.5"
                 >
