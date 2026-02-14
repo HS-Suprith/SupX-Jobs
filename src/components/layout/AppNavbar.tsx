@@ -10,6 +10,7 @@ const navItems = [
   { label: "Settings", to: "/settings" },
   { label: "Proof", to: "/proof" },
   { label: "Placement", to: "/placement" },
+  { label: "Resume Builder", to: "/rb/01-problem" },
 ];
 
 const AppNavbar = () => {
