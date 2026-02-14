@@ -19,7 +19,7 @@ const AppNavbar = () => {
     <nav className="border-b bg-background">
       <div className="flex items-center justify-between px-10 py-4">
         <span className="font-heading text-body font-medium text-foreground">
-          KodNest
+          SupX Jobs
         </span>
 
         {/* Desktop nav */}

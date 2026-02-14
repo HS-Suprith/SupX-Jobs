@@ -70,7 +70,7 @@ const PlacementLanding = () => {
       {/* Footer */}
       <footer className="border-t py-6 text-center">
         <p className="text-caption text-muted-foreground">
-          © {new Date().getFullYear()} KodNest. All rights reserved.
+          © {new Date().getFullYear()} SupX Jobs. All rights reserved.
         </p>
       </footer>
     </div>

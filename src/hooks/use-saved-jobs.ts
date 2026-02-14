@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const STORAGE_KEY = "kodnest-saved-jobs";
+const STORAGE_KEY = "supx-saved-jobs";
 
 export function useSavedJobs() {
   const [savedIds, setSavedIds] = useState<string[]>(() => {
