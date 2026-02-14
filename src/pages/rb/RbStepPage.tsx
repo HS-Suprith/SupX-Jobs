@@ -46,7 +46,8 @@ const RbStepPage = () => {
   // Reset artifact input when step changes
   useEffect(() => {
     setArtifactUrl(getArtifact(step) || "");
-  }, [step, getArtifact]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
 
   if (!config || !accessible) return null;
 
