@@ -11,12 +11,7 @@ import { Input } from "@/components/ui/input";
 const Index = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <TopBar
-        projectName="KodNest Premium Build System"
-        currentStep={1}
-        totalSteps={6}
-        status="in-progress"
-      />
+      <TopBar projectName="SupX Jobs" currentStep={1} totalSteps={6} status="in-progress" />
 
       <ContextHeader
         headline="Design System Foundation"
@@ -55,12 +50,8 @@ const PrimaryWorkspace = () => {
           <p className="text-body text-muted-foreground">
             Body — the default reading size, optimized for sustained reading at 1.7 line-height.
           </p>
-          <p className="text-caption text-muted-foreground">
-            Caption — metadata, labels, and secondary information.
-          </p>
-          <p className="text-overline uppercase text-muted-foreground">
-            Overline — section identifiers
-          </p>
+          <p className="text-caption text-muted-foreground">Caption — metadata, labels, and secondary information.</p>
+          <p className="text-overline uppercase text-muted-foreground">Overline — section identifiers</p>
         </div>
       </section>
 
@@ -104,12 +95,20 @@ const PrimaryWorkspace = () => {
           <Button variant="ghost">Ghost</Button>
           <Button variant="success">Success</Button>
           <Button variant="link">Link Style</Button>
-          <Button variant="default" disabled>Disabled</Button>
+          <Button variant="default" disabled>
+            Disabled
+          </Button>
         </div>
         <div className="flex flex-wrap items-center gap-4 mt-4">
-          <Button variant="default" size="sm">Small</Button>
-          <Button variant="default" size="default">Default</Button>
-          <Button variant="default" size="lg">Large</Button>
+          <Button variant="default" size="sm">
+            Small
+          </Button>
+          <Button variant="default" size="default">
+            Default
+          </Button>
+          <Button variant="default" size="lg">
+            Large
+          </Button>
         </div>
       </section>
 
@@ -174,7 +173,9 @@ const PrimaryWorkspace = () => {
             </CardHeader>
             <CardContent>
               <p className="text-caption text-muted-foreground">
-                The build failed because a required environment variable is missing. Add <code className="rounded bg-muted px-1 py-0.5 text-foreground">DATABASE_URL</code> to your project settings and try again.
+                The build failed because a required environment variable is missing. Add{" "}
+                <code className="rounded bg-muted px-1 py-0.5 text-foreground">DATABASE_URL</code> to your project
+                settings and try again.
               </p>
               <Button variant="outline" size="sm" className="mt-4">
                 Open Settings
