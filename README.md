@@ -1,5 +1,6 @@
 ## Project info
 **URL**: https://supxjobs.lovable.app
+
 <img width="1913" height="883" alt="Screenshot 2026-02-17 122935" src="https://github.com/user-attachments/assets/2c3902f6-9c35-48bd-9448-1aced3ae728b" />
 <img width="1899" height="887" alt="Screenshot 2026-02-17 122957" src="https://github.com/user-attachments/assets/c9c966a0-93c1-4152-b44d-6c80aa40be86" />
 <img width="1895" height="893" alt="Screenshot 2026-02-17 123044" src="https://github.com/user-attachments/assets/268fe06d-253f-45a2-869f-9ec172367a76" />
