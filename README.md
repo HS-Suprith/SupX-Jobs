@@ -2,4 +2,4 @@
 
 ## Project info
 
-**URL**: [https://lovable.dev/projects/](https://supxjobs.lovable.app)
+**URL**: https://supxjobs.lovable.app
